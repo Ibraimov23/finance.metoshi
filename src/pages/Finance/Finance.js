@@ -12,6 +12,10 @@ const StyledHeader = styled.h1`
   letter-spacing: 0.02em;
   color: #fff;
   text-align: center;
+  @media (max-width: 600px) {
+    font-size: 80px;
+    line-height: 80px;
+  }
 `;
 
 const StyledMitoshi = styled.span`

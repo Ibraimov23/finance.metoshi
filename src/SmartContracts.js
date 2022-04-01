@@ -320,12 +320,11 @@ static async withdraw(account) {
     }
 
     static async APR() {
-    let count1 = await SC.tokenInst.methods.rewardPerToken().call();
-    let hexString = count1.toString(18);
-    count1 = parseInt(hexString, 18);
-    let count2 = await parseInt(await SC.tokenInst.methods.rewardsDuration().call());
-    let count = parseInt(count1) / (parseInt(count2) / 86400) * 360 * 100;
-    return parseInt(count);
+        let count1 = await SC.tokenInst.methods.rewardPerToken().call();
+        let hexString = count1.toString(18);
+        count1 = parseInt(hexString, 18);
+        let count = parseInt(count1) / (parseInt(await parseInt(await SC.tokenInst.methods.rewardsDuration().call())) / 86400) * 360 * 100;
+        return parseInt(count);
     }
 
     static async APRV2() {

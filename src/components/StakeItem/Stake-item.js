@@ -11,12 +11,11 @@ const StyledStakeItemContainer = styled.div`
   z-index: 10;
   background: rgba(255, 255, 255, 0.04);
   border-radius: 32px;
-  padding: 32px;
-  min-width: 507px;
   color: #fff;
   box-sizing: border-box;
+  padding: 12px;
   @media (max-width: 600px) {
-    min-width: 430px;
+    min-width: auto !important;
   }
 `;
 
@@ -155,7 +154,7 @@ export const StakeItem = ({
     let [ initialized, setInitialized ] = useState(false);
     let [ approved, setApproved ] = useState(false);
     let [ earned, setEarned ] = useState('-');
-    let [ inStake, setInStake ] = useState('-');
+    let [ inStake, setInStake ]  = useState('-');
     let [ canHarvest, setCanHarvest ] = useState(false);
     let [ canWithdraw, setCanWithdraw ] = useState(false);
     let [ unlockedReward, setUnlockedReward ] = useState(0);
@@ -195,8 +194,8 @@ export const StakeItem = ({
           let userLastStackedTimeRaw = parseInt(await SC.tokenInst.methods.userLastStackedTime(account).call());
           // holdingTime = parseInt(holdingTimeRaw._hex, '16');
           // userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
-          setInStake(inStakeRaw);
-          setEarned(earnedRaw);
+           setInStake(inStakeRaw);
+          // setEarned(earnedRaw);
       } else if (version === "2") {
           let inStakeRaw = await SC.getInStakeV2(account);
            earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
@@ -206,11 +205,11 @@ export const StakeItem = ({
       }
       
       setCanHarvest(earnedRaw > 0);
-      // if (inStake == 0) {
-      //   setCanWithdraw(version === "1" ? !((holdingTime * 1000) >= (Date.now() - (userLastStackedTime * 1000))) : true);
-      // } else {
-      //   setCanWithdraw(false);
-      // }
+       if (inStake == 0) {
+         setCanWithdraw(version === "1" ? !((holdingTime * 1000) >= (Date.now() - (userLastStackedTime * 1000))) : true);
+       } else {
+         setCanWithdraw(false);
+       }
       setCanWithdraw(version === "1" ? !((holdingTime * 1000) >= (Date.now() - (userLastStackedTime * 1000))) : true);
     }, [ account, version, inStake ]);
 
