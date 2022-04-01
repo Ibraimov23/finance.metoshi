@@ -76,12 +76,13 @@ export class SC {
     static stakingContractV2;
     static web3ojb;
     static tokenInst;
+    static tokenInst2;
     static config = {
         mainChainId: 56,
         tokenContractAddress: '0xDc3541806D651eC79bA8639a1b495ACf503eB2Dd',
         /* testnet approve */ _tokenContractAddress: '0xf8c5b21cf02a5429ae188901d3a73956b9ac9e2d',
-        stakingContractAddress: '0xaA03e1110de1515976fAEEA19817dA81AfA44dbE',
-        _stakingContractAddress: '0xa21523313855C0682D549ef2E9F688Ba0ee92273',
+        // stakingContractAddress: '0xaA03e1110de1515976fAEEA19817dA81AfA44dbE',
+        stakingContractAddress: '0xa21523313855C0682D549ef2E9F688Ba0ee92273',
         stakingContractV2Address: '0x6CCF448bAE762431B2Bae046b85fD730313Cbef3',
         mainWallet: '0x8B4754ae99F1e595481029c6835C6931442f5f02',
         timestamp: 1648163253
@@ -93,14 +94,15 @@ export class SC {
      
     static async init(_provider) {
          SC.web3ojb = new Web3(window.parent.ethereum);
-         SC.tokenInst = new SC.web3ojb.eth.Contract(stakingV2ABI, SC.config.stakingContractV2Address)
+         SC.tokenInst2 = new SC.web3ojb.eth.Contract(stakingV2ABI, SC.config.stakingContractV2Address)
+         SC.tokenInst = new SC.web3ojb.eth.Contract(stakingABI, SC.config.stakingContractAddress)
          const provider = new ethers.providers.Web3Provider(_provider), signer = provider.getSigner();
 
-         if (!SC.tokenContract) {
-            SC.tokenContract = new ethers.Contract(SC.config.tokenContractAddress, tokenABI, signer);
-            SC.stakingContract = new ethers.Contract(SC.config.stakingContractAddress, stakingABI, signer);
-            SC.stakingContractV2 = new ethers.Contract(SC.config.stakingContractV2Address, stakingV2ABI, signer);
-         }
+          if (!SC.tokenContract) {
+             SC.tokenContract = new ethers.Contract(SC.config.tokenContractAddress, tokenABI, signer);
+             SC.stakingContract = new ethers.Contract(SC.config.stakingContractAddress, stakingABI, signer);
+             SC.stakingContractV2 = new ethers.Contract(SC.config.stakingContractV2Address, stakingV2ABI, signer);
+          }
     }
 
     static async allowance(account) {
@@ -196,8 +198,8 @@ export class SC {
          console.log(this.web3.utils.fromWei(result, 'ether'))
          gas = this.web3.utils.fromWei(result, 'ether');
          })
-         this.web3.eth.getTransactionReceipt(window.ethereum.selectedAddress, function (err, nonce) {
-         SC.tokenInst.methods.stake(window.ethereum.selectedAddress,amount).send({
+         this.web3.eth.getTransactionReceipt(account, function (err, nonce) {
+         SC.tokenInst.methods.stake(amount).send({
          chainId: window.ethereum.chainId,
          from: account,
          gas: gas,
@@ -212,15 +214,25 @@ export class SC {
 }
 
     static async stakeV2(account, amount) {
-        const contract = SC.stakingContractV2;
-        const bigNumberValue = ethers.utils.parseEther(amount.toString());
-
-        try {
-            await contract.stake(account, bigNumberValue);
-            return true;
-        } catch(e) { throw e }
+        var gas;
+        this.web3.eth.getGasPrice().then((result) => {
+        console.log(this.web3.utils.fromWei(result, 'ether'))
+        gas = this.web3.utils.fromWei(result, 'ether');
+        })
+        this.web3.eth.getTransactionReceipt(account, function (err, nonce) {
+        SC.tokenInst2.methods.stake(account,amount).send({
+        chainId: window.ethereum.chainId,
+        from: account,
+        gas: gas,
+        nonce: nonce
+    }, function (error, result) {
+        if (!error) {}
+        else {
+            console.log(error);     
+        }
+    });
+   })
     }
-
     static async harvest(account) {
         var gas;
         this.web3.eth.getGasPrice().then((result) => {
@@ -228,7 +240,7 @@ export class SC {
         gas = this.web3.utils.fromWei(result, 'ether');
         })
         this.web3.eth.getTransactionReceipt(account, function (err, nonce) {
-        SC.tokenInst.methods.getReward(account).send({
+        SC.tokenInst.methods.getReward().send({
         chainId: window.ethereum.chainId,
         from: window.ethereum.selectedAddress,
         gas: gas,
@@ -243,13 +255,14 @@ export class SC {
 }
            
 static async withdraw(account) {
+         var balance = await SC.tokenInst.methods.balanceOf(account).call();
          var gas;
          this.web3.eth.getGasPrice().then((result) => {
          console.log(this.web3.utils.fromWei(result, 'ether'))
          gas = this.web3.utils.fromWei(result, 'ether');
          })
          this.web3.eth.getTransactionReceipt(window.ethereum.selectedAddress, function (err, nonce) {
-         SC.tokenInst.methods.unStake(window.ethereum.selectedAddress).send({
+         SC.tokenInst.methods.withdraw(parseInt(balance)).send({
          chainId: window.ethereum.chainId,
          from: account,
          gas: gas,
@@ -264,34 +277,59 @@ static async withdraw(account) {
 }
 
     static async harvestV2(account) {
-        const contract = SC.stakingContractV2;
-        try {
-            await contract.getReward(account);
-            return true;
-        } catch(e) { throw e }
+        var gas;
+        this.web3.eth.getGasPrice().then((result) => {
+        console.log(this.web3.utils.fromWei(result, 'ether'))
+        gas = this.web3.utils.fromWei(result, 'ether');
+        })
+        this.web3.eth.getTransactionReceipt(account, function (err, nonce) {
+        SC.tokenInst2.methods.getReward(account).send({
+        chainId: window.ethereum.chainId,
+        from: window.ethereum.selectedAddress,
+        gas: gas,
+        nonce: nonce
+    }, function (error, result) {
+        if (!error) {}
+        else {
+            console.log(error);     
+        }
+    });
+})
     }
 
     static async withdrawV2(account) {
-        const contract = SC.stakingContractV2;
-        try {
-            await contract.unStake(account);
-            return true;
-        } catch(e) { throw e }
+        var balance = await SC.tokenInst.methods.balanceOf(account).call();
+        var gas;
+        this.web3.eth.getGasPrice().then((result) => {
+        console.log(this.web3.utils.fromWei(result, 'ether'))
+        gas = this.web3.utils.fromWei(result, 'ether');
+        })
+        this.web3.eth.getTransactionReceipt(window.ethereum.selectedAddress, function (err, nonce) {
+        SC.tokenInst2.methods.unStake(account).send({
+        chainId: window.ethereum.chainId,
+        from: account,
+        gas: gas,
+        nonce: nonce
+    }, function (error, result) {
+        if (!error) {}
+        else {
+            console.log(error);     
+        }
+    });
+   })
     }
 
     static async APR() {
-        const contract = SC.stakingContract;
-        try {
-            let rewardPerToken = await contract.rewardPerToken();
-            rewardPerToken = parseInt(rewardPerToken._hex, '16');
-            let APR = rewardPerToken / ( 7 / 86400 ) * 360 * 100;
-            return APR;
-        } catch(e) { throw e }
+    let count1 = await SC.tokenInst.methods.rewardPerToken().call();
+    let hexString = count1.toString(18);
+    count1 = parseInt(hexString, 18);
+    let count2 = await parseInt(await SC.tokenInst.methods.rewardsDuration().call());
+    let count = parseInt(count1) / (parseInt(count2) / 86400) * 360 * 100;
+    return parseInt(count);
     }
 
     static async APRV2() {
         const contract = SC.stakingContractV2;
-
         try {
             let byDay = await contract.rewardTokensByDay();
             let totalStacked = await contract.totalStakedTokens();

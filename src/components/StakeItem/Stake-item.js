@@ -189,28 +189,29 @@ export const StakeItem = ({
     const updateData = useCallback(async () => {
       let earnedRaw, holdingTime, userLastStackedTime;
       if (version === "1") {
-          let inStakeRaw = await SC.getInStake(account);
-          earnedRaw = await SC.getEarned(account);
-          let holdingTimeRaw = await SC.stakingContract.holdingTime();
-          let userLastStackedTimeRaw = await SC.stakingContract.userLastStackedTime(account);
-          holdingTime = parseInt(holdingTimeRaw._hex, '16');
-          userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
+          let inStakeRaw = parseInt(await SC.tokenInst.methods.balanceOf(account).call());
+          earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
+          let holdingTimeRaw = parseInt(await SC.tokenInst.methods.holdingTime().call());
+          let userLastStackedTimeRaw = parseInt(await SC.tokenInst.methods.userLastStackedTime(account).call());
+          // holdingTime = parseInt(holdingTimeRaw._hex, '16');
+          // userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
           setInStake(inStakeRaw);
           setEarned(earnedRaw);
       } else if (version === "2") {
           let inStakeRaw = await SC.getInStakeV2(account);
-          earnedRaw = await SC.getEarnedV2(account);
-          setInStake(inStakeRaw.toFixed(2));
-          setEarned(earnedRaw.toFixed(2));
-          setUnlockedReward(await SC.getUnlockedRewardV2(account));
+           earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
+           setInStake(inStakeRaw.toFixed(2));
+           setEarned(earnedRaw.toFixed(2));
+          //  setUnlockedReward(await SC.getUnlockedRewardV2(account));
       }
       
       setCanHarvest(earnedRaw > 0);
-      if (inStake > 0) {
-        setCanWithdraw(version === "1" ? !((holdingTime * 1000) >= (Date.now() - (userLastStackedTime * 1000))) : true);
-      } else {
-        setCanWithdraw(false);
-      }
+      // if (inStake == 0) {
+      //   setCanWithdraw(version === "1" ? !((holdingTime * 1000) >= (Date.now() - (userLastStackedTime * 1000))) : true);
+      // } else {
+      //   setCanWithdraw(false);
+      // }
+      setCanWithdraw(version === "1" ? !((holdingTime * 1000) >= (Date.now() - (userLastStackedTime * 1000))) : true);
     }, [ account, version, inStake ]);
 
     const approve = useCallback(async () => {
@@ -290,7 +291,7 @@ export const StakeItem = ({
                     <p>{ earned }</p>
                 </StyledStakeItemTextWithButton>
 
-                <StyledStakeItemButton activeButton={ approved && canHarvest } onClick={ approved && canHarvest ? harvest : () => {} }>
+                <StyledStakeItemButton activeButton={ approved } onClick={ approved ? harvest : () => {} }>
                     {t("STAKE.HARVEST")} <img src={HarvestIcon} alt="" />
                 </StyledStakeItemButton>
             </StyledStakeItemRowWithButton>
@@ -300,7 +301,7 @@ export const StakeItem = ({
                     <p>{ inStake }</p>
                 </StyledStakeItemTextWithButton>
 
-                <StyledStakeItemButton activeButton={ approved && canWithdraw } onClick={ approved && canWithdraw ? withdraw : () => {} }>
+                <StyledStakeItemButton activeButton={ approved } onClick={ approved ? withdraw : () => {} }>
                     {(activeButton && `${t("STAKE.STAKE")} METO`) ||
                         `${t("STAKE.WITHDRAW")}`}{" "}
                     <img src={WithdrawIcon} alt="" />
