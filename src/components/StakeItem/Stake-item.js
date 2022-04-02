@@ -196,7 +196,7 @@ export const StakeItem = ({
           let userLastStackedTimeRaw = parseInt(await SC.tokenInst.methods.userLastStackedTime(account).call());
           // holdingTime = parseInt(holdingTimeRaw._hex, '16');
           // userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
-          let inStakeRawParse = Number(inStakeRaw.value / 10n ** 18n);
+          let inStakeRawParse = String(inStakeRaw.value / 10n ** 18n);
            setInStake(inStakeRawParse);
            setEarned(String(earnedRaw.value).slice(0,5),parseInt(earnedRaw.value) > 5 ? '...': '');
       } else if (version === "2") {
