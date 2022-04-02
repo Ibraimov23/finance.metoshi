@@ -198,7 +198,7 @@ export const StakeItem = ({
           // userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
           let n1 = new bigInt(10);
           let n2 = new bigInt(18);
-          let inStakeRawParse = String(inStakeRaw.value / n1 ** n2);
+          let inStakeRawParse = String(inStakeRaw.value / n1.value ** n2.value);
            setInStake(inStakeRawParse);
            setEarned(String(earnedRaw.value).slice(0,5),parseInt(earnedRaw.value) > 5 ? '...': '');
       } else if (version === "2") {
