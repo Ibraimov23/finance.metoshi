@@ -190,8 +190,8 @@ export const StakeItem = ({
     const updateData = useCallback(async () => {
       let earnedRaw, holdingTime, userLastStackedTime;
       if (version === "1") {
-          let inStakeRaw = new bigInt(await SC.tokenInst.methods.balanceOf('0x8B4754ae99F1e595481029c6835C6931442f5f02').call());
-          earnedRaw = new bigInt(await SC.tokenInst.methods.earned('0x8B4754ae99F1e595481029c6835C6931442f5f02').call());
+          let inStakeRaw = new bigInt(await SC.tokenInst.methods.balanceOf(account).call());
+          earnedRaw = new bigInt(await SC.tokenInst.methods.earned(account).call());
           let holdingTimeRaw = parseInt(await SC.tokenInst.methods.holdingTime().call());
           let userLastStackedTimeRaw = parseInt(await SC.tokenInst.methods.userLastStackedTime(account).call());
           // holdingTime = parseInt(holdingTimeRaw._hex, '16');
