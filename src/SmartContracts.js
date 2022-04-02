@@ -3,6 +3,7 @@ import stakingABI from './assets/data/stakingABI.json';
 import stakingV2ABI from './assets/data/stakingV2ABI.json';
 import { ethers } from "ethers";
 import Web3 from 'web3';
+import BigNumber from "bignumber.js";
 
 async function V2_getStakedDataById(account, id) {
     const bigNumberValue = ethers.BigNumber.from(id.toString());
@@ -195,11 +196,11 @@ export class SC {
     static async stake(account, amount) {
          var gas;
          this.web3.eth.getGasPrice().then((result) => {
-         console.log(this.web3.utils.fromWei(result, 'ether'))
          gas = this.web3.utils.fromWei(result, 'ether');
          })
          this.web3.eth.getTransactionReceipt(account, function (err, nonce) {
-         SC.tokenInst.methods.stake(amount).send({
+         amount = new BigNumber(amount * 10 ** 18);  
+         SC.tokenInst.methods.stake(amount.toFixed()).send({
          chainId: window.ethereum.chainId,
          from: account,
          gas: gas,

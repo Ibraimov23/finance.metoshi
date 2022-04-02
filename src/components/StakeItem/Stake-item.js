@@ -198,7 +198,7 @@ export const StakeItem = ({
            setInStake(inStakeRaw);
            setEarned(earnedRaw);
       } else if (version === "2") {
-          let inStakeRaw = await SC.getInStakeV2(account);
+          let inStakeRaw = await SC.tokenInst2.methods.getInStakeV2(account);
            earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
            setInStake(inStakeRaw.toFixed(2));
            setEarned(earnedRaw.toFixed(2));

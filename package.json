@@ -10,6 +10,8 @@
         "@web3-react/core": "^6.1.9",
         "@web3-react/injected-connector": "^6.0.7",
         "@web3-react/walletconnect-connector": "^6.2.13",
+        "big-integer": "^1.6.51",
+        "bignumber.js": "^9.0.2",
         "cipher": "^0.0.0",
         "crypto": "^1.0.1",
         "ethers": "^5.6.2",
@@ -28,7 +30,7 @@
         "web3": "^1.7.1"
     },
     "scripts": {
-        "start": "node app",
+        "start": "react-app-rewired start",
         "build": "react-app-rewired build",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject"
