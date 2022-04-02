@@ -13,9 +13,10 @@ const StyledStakeItemContainer = styled.div`
   border-radius: 32px;
   color: #fff;
   box-sizing: border-box;
-  padding: 12px;
+  padding: 32px;
   @media (max-width: 600px) {
     min-width: auto !important;
+    padding: 12px;
   }
 `;
 
@@ -195,7 +196,7 @@ export const StakeItem = ({
           // holdingTime = parseInt(holdingTimeRaw._hex, '16');
           // userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
            setInStake(inStakeRaw);
-          // setEarned(earnedRaw);
+           setEarned(earnedRaw);
       } else if (version === "2") {
           let inStakeRaw = await SC.getInStakeV2(account);
            earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
