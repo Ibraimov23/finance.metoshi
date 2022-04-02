@@ -30,7 +30,7 @@
         "web3": "^1.7.1"
     },
     "scripts": {
-        "start": "react-app-rewired start",
+        "start": "node app",
         "build": "react-app-rewired build",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject"
