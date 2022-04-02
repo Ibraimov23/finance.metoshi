@@ -199,9 +199,9 @@ export const StakeItem = ({
            setInStake(String(inStakeRaw.value / 10n ** 18n));
            setEarned(String(earnedRaw.value).slice(0,5),parseInt(earnedRaw.value) > 5 ? '...': '');
       } else if (version === "2") {
-          // let inStakeRaw = await SC.tokenInst2.methods.getInStakeV2(account);
+           let inStakeRaw = await SC.getInStakeV2(account);
            earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
-          //  setInStake(inStakeRaw.toFixed(2));
+            setInStake(inStakeRaw.toFixed(2));
            setEarned(earnedRaw.toFixed(2));
           //  setUnlockedReward(await SC.getUnlockedRewardV2(account));
       }
