@@ -193,132 +193,55 @@ export class SC {
         } catch(e) { throw e }
     }
 
-    static async stake(account, amount) {
-         var gas;
-         this.web3.eth.getGasPrice().then((result) => {
-         gas = this.web3.utils.fromWei(result, 'ether');
-         })
-         this.web3.eth.getTransactionReceipt(account, function (err, nonce) {
-         amount = new BigNumber(amount * 10 ** 18);  
-         SC.tokenInst.methods.stake(amount.toFixed()).send({
-         chainId: window.ethereum.chainId,
-         from: account,
-         gas: gas,
-         nonce: nonce
-     }, function (error, result) {
-         if (!error) {}
-         else {
-             console.log(error);     
-         }
-     });
-    })
+static async stake(account, amount) {
+    amount = new BigNumber(amount * 10 ** 18);  
+    SC.tokenInst.methods.stake(amount.toFixed())
+    .send({from: account})
+        .then(function(result){
+            console.log(result)
+    });
 }
 
-    static async stakeV2(account, amount) {
-        var gas;
-        this.web3.eth.getGasPrice().then((result) => {
-        console.log(this.web3.utils.fromWei(result, 'ether'))
-        gas = this.web3.utils.fromWei(result, 'ether');
-        })
-        this.web3.eth.getTransactionReceipt(account, function (err, nonce) {
-        SC.tokenInst2.methods.stake(account,amount).send({
-        chainId: window.ethereum.chainId,
-        from: account,
-        gas: gas,
-        nonce: nonce
-    }, function (error, result) {
-        if (!error) {}
-        else {
-            console.log(error);     
-        }
+static async harvest(account) {
+    SC.tokenInst.methods.getReward()
+    .send({from: account})
+        .then(function(result){
+            console.log(result)
     });
-   })
-    }
-    static async harvest(account) {
-        var gas;
-        this.web3.eth.getGasPrice().then((result) => {
-        console.log(this.web3.utils.fromWei(result, 'ether'))
-        gas = this.web3.utils.fromWei(result, 'ether');
-        })
-        this.web3.eth.getTransactionReceipt(account, function (err, nonce) {
-        SC.tokenInst.methods.getReward().send({
-        chainId: window.ethereum.chainId,
-        from: window.ethereum.selectedAddress,
-        gas: gas,
-        nonce: nonce
-    }, function (error, result) {
-        if (!error) {}
-        else {
-            console.log(error);     
-        }
-    });
-})
 }
            
-static async withdraw(account) {
-         var balance = await SC.tokenInst.methods.balanceOf(account).call();
-         var gas;
-         this.web3.eth.getGasPrice().then((result) => {
-         console.log(this.web3.utils.fromWei(result, 'ether'))
-         gas = this.web3.utils.fromWei(result, 'ether');
-         })
-         this.web3.eth.getTransactionReceipt(window.ethereum.selectedAddress, function (err, nonce) {
-         SC.tokenInst.methods.withdraw(parseInt(balance)).send({
-         chainId: window.ethereum.chainId,
-         from: account,
-         gas: gas,
-         nonce: nonce
-     }, function (error, result) {
-         if (!error) {}
-         else {
-             console.log(error);     
-         }
-     });
-    })
+static async withdraw(account,amount) {
+    SC.tokenInst.methods.withdraw(amount)
+    .send({from: account})
+        .then(function(result){
+            console.log(result)
+    });
 }
 
-    static async harvestV2(account) {
-        var gas;
-        this.web3.eth.getGasPrice().then((result) => {
-        console.log(this.web3.utils.fromWei(result, 'ether'))
-        gas = this.web3.utils.fromWei(result, 'ether');
-        })
-        this.web3.eth.getTransactionReceipt(account, function (err, nonce) {
-        SC.tokenInst2.methods.getReward(account).send({
-        chainId: window.ethereum.chainId,
-        from: window.ethereum.selectedAddress,
-        gas: gas,
-        nonce: nonce
-    }, function (error, result) {
-        if (!error) {}
-        else {
-            console.log(error);     
-        }
+static async stakeV2(account, amount) {
+    amount = new BigNumber(amount * 10 ** 18);  
+    SC.tokenInst2.methods.stake(account,amount)
+    .send({from: account})
+        .then(function(result){
+            console.log(result)
     });
-})
-    }
+}
 
-    static async withdrawV2(account) {
-        var balance = await SC.tokenInst.methods.balanceOf(account).call();
-        var gas;
-        this.web3.eth.getGasPrice().then((result) => {
-        console.log(this.web3.utils.fromWei(result, 'ether'))
-        gas = this.web3.utils.fromWei(result, 'ether');
-        })
-        this.web3.eth.getTransactionReceipt(window.ethereum.selectedAddress, function (err, nonce) {
-        SC.tokenInst2.methods.unStake(account).send({
-        chainId: window.ethereum.chainId,
-        from: account,
-        gas: gas,
-        nonce: nonce
-    }, function (error, result) {
-        if (!error) {}
-        else {
-            console.log(error);     
-        }
+static async harvestV2(account) {
+    SC.tokenInst2.methods.getReward(account)
+    .send({from: account})
+        .then(function(result){
+             console.log(result)
     });
-   })
-    }
+}
+
+static async withdrawV2(account) {
+    SC.tokenInst2.methods.unStake(account)
+    .send({from: account})
+        .then(function(result){
+            console.log(result)
+    });
+}
 
     static async APR() {
         let count1 = await SC.tokenInst.methods.rewardPerToken().call();
