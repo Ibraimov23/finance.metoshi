@@ -186,7 +186,7 @@ export const StakeItem = ({
           await SC.withdrawV2(account, SC.inStakeV2);
         }
     }, [ version, account ]);
-
+   
     const updateData = useCallback(async () => {
       let earnedRaw, holdingTime, userLastStackedTime;
       if (version === "1") {
@@ -196,7 +196,7 @@ export const StakeItem = ({
           let userLastStackedTimeRaw = parseInt(await SC.tokenInst.methods.userLastStackedTime(account).call());
           // holdingTime = parseInt(holdingTimeRaw._hex, '16');
           // userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
-          let inStakeRawParse = new bigInt(inStakeRaw.value / 10n ** 18n);
+          let inStakeRawParse = inStakeRaw != undefined ? new bigInt(inStakeRaw.value / 10n ** 18n) : 0;
            setInStake(parseInt(inStakeRawParse.value));
            setEarned(String(earnedRaw.value).slice(0,5),parseInt(earnedRaw.value) > 5 ? '...': '');
       } else if (version === "2") {
