@@ -198,11 +198,11 @@ export const StakeItem = ({
           // userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
           let inStakeRawParse = new bigInt(inStakeRaw.value / 10n ** 18n);
            setInStake(parseInt(inStakeRawParse.value));
-           setEarned(String(earnedRaw.value).slice(0,5) + '...');
+           setEarned(String(earnedRaw.value).slice(0,5),parseInt(earnedRaw.value) > 5 ? '...': '');
       } else if (version === "2") {
-          let inStakeRaw = await SC.tokenInst2.methods.getInStakeV2(account);
+          // let inStakeRaw = await SC.tokenInst2.methods.getInStakeV2(account);
            earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
-           setInStake(inStakeRaw.toFixed(2));
+          //  setInStake(inStakeRaw.toFixed(2));
            setEarned(earnedRaw.toFixed(2));
           //  setUnlockedReward(await SC.getUnlockedRewardV2(account));
       }
@@ -247,7 +247,7 @@ export const StakeItem = ({
                 setInitialized(true);
                 setInterval(() => {
                     updateData();
-                }, 10000);
+                }, 1000);
             }
         })();
     }, [
