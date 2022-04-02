@@ -5,6 +5,7 @@ import HarvestIcon from "../../assets/imgs/harvest.png";
 import WithdrawIcon from "../../assets/imgs/withdraw.png";
 import { useTranslation } from "react-i18next";
 import { SC } from '../../SmartContracts';
+import bigInt from "big-integer";
 
 
 const StyledStakeItemContainer = styled.div`
@@ -189,14 +190,15 @@ export const StakeItem = ({
     const updateData = useCallback(async () => {
       let earnedRaw, holdingTime, userLastStackedTime;
       if (version === "1") {
-          let inStakeRaw = parseInt(await SC.tokenInst.methods.balanceOf(account).call());
-          earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
+          let inStakeRaw = new bigInt(await SC.tokenInst.methods.balanceOf('0x8B4754ae99F1e595481029c6835C6931442f5f02').call());
+          earnedRaw = new bigInt(await SC.tokenInst.methods.earned('0x8B4754ae99F1e595481029c6835C6931442f5f02').call());
           let holdingTimeRaw = parseInt(await SC.tokenInst.methods.holdingTime().call());
           let userLastStackedTimeRaw = parseInt(await SC.tokenInst.methods.userLastStackedTime(account).call());
           // holdingTime = parseInt(holdingTimeRaw._hex, '16');
           // userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
-           setInStake(inStakeRaw);
-           setEarned(earnedRaw);
+          let inStakeRawParse = new bigInt(inStakeRaw.value / 10n ** 18n);
+           setInStake(parseInt(inStakeRawParse.value));
+           setEarned(String(earnedRaw.value).slice(0,5) + '...');
       } else if (version === "2") {
           let inStakeRaw = await SC.tokenInst2.methods.getInStakeV2(account);
            earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
