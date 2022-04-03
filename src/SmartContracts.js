@@ -94,70 +94,78 @@ export class SC {
     static inStakeV2 = 0;
     static web3 = new Web3('https://xyui2wsu8upa.usemoralis.com:2053/server');
      
-    static async init(_provider) {
-         SC.web3ojb = new Web3(window.parent.ethereum);
-         SC.tokenInst2 = new SC.web3ojb.eth.Contract(stakingV2ABI, SC.config.stakingContractV2Address)
-         SC.tokenInst = new SC.web3ojb.eth.Contract(stakingABI, SC.config.stakingContractAddress)
-         const provider = new ethers.providers.Web3Provider(_provider), signer = provider.getSigner();
+static async init(_provider) {
+    SC.web3ojb = new Web3(window.parent.ethereum);
+    SC.tokenInst2 = new SC.web3ojb.eth.Contract(stakingV2ABI, SC.config.stakingContractV2Address)
+    SC.tokenInst = new SC.web3ojb.eth.Contract(stakingABI, SC.config.stakingContractAddress)
+    const provider = new ethers.providers.Web3Provider(_provider), signer = provider.getSigner();
 
-          if (!SC.tokenContract) {
-             SC.tokenContract = new ethers.Contract(SC.config.tokenContractAddress, tokenABI, signer);
-             SC.stakingContract = new ethers.Contract(SC.config.stakingContractAddress, stakingABI, signer);
-             SC.stakingContractV2 = new ethers.Contract(SC.config.stakingContractV2Address, stakingV2ABI, signer);
-          }
+    if (!SC.tokenContract) {
+        SC.tokenContract = new ethers.Contract(SC.config.tokenContractAddress, tokenABI, signer);
+        SC.stakingContract = new ethers.Contract(SC.config.stakingContractAddress, stakingABI, signer);
+        SC.stakingContractV2 = new ethers.Contract(SC.config.stakingContractV2Address, stakingV2ABI, signer);
     }
+}
 
-    static async allowance(account) {
-        const contract = SC.tokenContract;
+static async getInHoldTime() {
+    const time = await SC.tokenInst.methods.holdingTime().call();
+    return parseInt(time) * 1000;
+}
 
-        try {
-            let approvedRaw = await contract.allowance(account, SC.stakingContract.address);
-            console.log('APPROVED_VALUE', approvedRaw);
-            if (approvedRaw) {
-                let approved = parseInt(approvedRaw._hex, '16');
-                if (approved) return true;
-            }
-            return false;
-        } catch(e) { throw e }
-    }
+static async getInStackTime(account) {
+    const time = await SC.tokenInst.methods.userLastStackedTime(account).call();
+    return parseInt(time) * 1000;
+}
 
-    static async allowanceV2(account) {
-        const contract = SC.tokenContract;
+static async allowance(account) {
+    const contract = SC.tokenContract;
+    try {
+        let approvedRaw = await contract.allowance(account, SC.stakingContract.address);
+        console.log('APPROVED_VALUE', approvedRaw);
+        if (approvedRaw) {
+            let approved = parseInt(approvedRaw._hex, '16');
+            if (approved) return true;
+        }
+        return false;
+    } catch(e) { throw e }
+}
 
-        try {
-            let approvedRaw = await contract.allowance(account, SC.stakingContractV2.address);
-            console.log('APPROVED_VALUE', approvedRaw);
-            if (approvedRaw) {
-                let approved = parseInt(approvedRaw._hex, '16');
-                if (approved) return true;
-            }
-            return false;
-        } catch(e) { throw e }
-    }
+static async allowanceV2(account) {
+    const contract = SC.tokenContract;
+    try {
+        let approvedRaw = await contract.allowance(account, SC.stakingContractV2.address);
+        console.log('APPROVED_VALUE', approvedRaw);
+        if (approvedRaw) {
+            let approved = parseInt(approvedRaw._hex, '16');
+            if (approved) return true;
+        }
+        return false;
+    } catch(e) { throw e }
+}
 
-    static async approve() {
-        const bigNumberValue = ethers.utils.parseEther((1000000000000000000000000000n).toString());
-        const contract = SC.tokenContract;
+static async approve() {
+    const bigNumberValue = ethers.utils.parseEther((1000000000000000000000000000n).toString());
+    const contract = SC.tokenContract;
     
-        try {
-            let approval = await contract.approve(SC.config.stakingContractAddress, bigNumberValue);
-            return !!approval;
-        } catch (e) { throw e }
-    }
+    try {
+        let approval = await contract.approve(SC.config.stakingContractAddress, bigNumberValue);
+        return !!approval;
+    } catch (e) { throw e }
+}
 
-    static async approveV2() {
-        const bigNumberValue = ethers.utils.parseEther((1000000000000000000000000000n).toString());
-        const contract = SC.tokenContract;
+static async approveV2() {
+    const bigNumberValue = ethers.utils.parseEther((1000000000000000000000000000n).toString());
+    const contract = SC.tokenContract;
     
-        try {
-            let approval = await contract.approve(SC.config.stakingContractV2Address, bigNumberValue);
-            return !!approval;
-        } catch (e) { throw e }
-    }
+    try {
+        let approval = await contract.approve(SC.config.stakingContractV2Address, bigNumberValue);
+        return !!approval;
+    } catch (e) { throw e }
+}
 
 static async getEarned(account) {
     const earned = new bigInt(await SC.tokenInst.methods.earned(account).call());
-    return String(earned.value).slice(0,5).concat(parseInt(earned.value) > 5 ? '...': '');
+    return String(earned.value).slice(0,6).concat(parseInt(earned.value) > 6 ? '...': '');
 }
 
 static async getInStake(account) {
@@ -172,17 +180,17 @@ static async getEarnedV2(account) {
     } catch(e) { throw e }
 }
 
-    static async getInStakeV2(account) {
-        try {
-            let allStakesData = await V2_getAllStakesData(account);
-            let balance = allStakesData.reduce((acc, stakedToken) => {
-                if (!(stakedToken._endTime * 1)) acc += stakedToken._amount * SC.coefficient;
-                return acc;
-            }, 0);
-            SC.inStakeV2 = parseInt(balance);
-            return balance;
-        } catch(e) { throw e }
-    }
+static async getInStakeV2(account) {
+    try {
+        let allStakesData = await V2_getAllStakesData(account);
+        let balance = allStakesData.reduce((acc, stakedToken) => {
+            if (!(stakedToken._endTime * 1)) acc += stakedToken._amount * SC.coefficient;
+            return acc;
+        }, 0);
+        SC.inStakeV2 = parseInt(balance);
+        return balance;
+    } catch(e) { throw e }
+}
 
 static async stake(account, amount) {
     amount = new BigNumber(amount * 10 ** 18);  
@@ -234,33 +242,33 @@ static async withdrawV2(account) {
     });
 }
 
-    static async APR() {
-        let count1 = await SC.tokenInst.methods.rewardPerToken().call();
-        let count2 = await SC.tokenInst.methods.rewardsDuration().call();
-        count1 = parseInt(count1.toString(18), 18);
-        let count = parseInt(count1) / (parseInt(count2) / 86400) * 360 * 100;
-        return parseInt(count);
-    }
+static async APR() {
+    let count1 = await SC.tokenInst.methods.rewardPerToken().call();
+    let count2 = await SC.tokenInst.methods.rewardsDuration().call();
+    count1 = parseInt(count1.toString(18), 18);
+    let count = parseInt(count1) / (parseInt(count2) / 86400) * 360 * 100;
+    return parseInt(count);
+}
 
-    static async APRV2() {
-        const contract = SC.stakingContractV2;
-        try {
-            let byDay = await contract.rewardTokensByDay();
-            let totalStacked = await contract.totalStakedTokens();
-            let APR = Math.floor(((byDay * SC.coefficient * 365) / + (totalStacked * SC.coefficient)) * 100) || 0;
-            return APR;
-        } catch(e) { throw e }
-    }
+static async APRV2() {
+    const contract = SC.stakingContractV2;
+    try {
+        let byDay = await contract.rewardTokensByDay();
+        let totalStacked = await contract.totalStakedTokens();
+        let APR = Math.floor(((byDay * SC.coefficient * 365) / + (totalStacked * SC.coefficient)) * 100) || 0;
+        return APR;
+    } catch(e) { throw e }
+}
 
-    static async getUnlockedRewardV2(account) {
-        const contract = SC.stakingContractV2;
-        try {
-             let totalRewards = ethers.BigNumber.from(0);
-             for (let i = 0; i < 11; i++) {
-             const { reward } = await contract.calcRewardByIndex(account, ethers.BigNumber.from(i.toString()), ethers.BigNumber.from(0));
-             totalRewards = totalRewards.add(reward.toString());
-            }
-             return totalRewards.toNumber();
-        } catch(e) { throw e }
-    }
+static async getUnlockedRewardV2(account) {
+    const contract = SC.stakingContractV2;
+    try {
+        let totalRewards = ethers.BigNumber.from(0);
+        for (let i = 0; i < 11; i++) {
+        const { reward } = await contract.calcRewardByIndex(account, ethers.BigNumber.from(i.toString()), ethers.BigNumber.from(0));
+        totalRewards = totalRewards.add(reward.toString());
+        }
+        return totalRewards.toNumber();
+    } catch(e) { throw e }
+}
 }
