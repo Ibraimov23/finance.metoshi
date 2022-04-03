@@ -220,7 +220,7 @@ static async withdraw(account,amount) {
 
 static async stakeV2(account, amount) {
     amount = new BigNumber(amount * 10 ** 18);  
-    SC.tokenInst2.methods.stake(account,amount)
+    SC.tokenInst2.methods.stake(account,amount.toFixed())
     .send({from: account})
         .then(function(result){
             console.log(result)
