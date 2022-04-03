@@ -188,20 +188,20 @@ export const StakeItem = ({
     }, [ version, account ]);
    
     const updateData = useCallback(async () => {
-      let earnedRaw, holdingTime, userLastStackedTime;
+      let inStakeRaw, earnedRaw, holdingTime, userLastStackedTime;
       if (version === "1") {
-          let inStakeRaw = new bigInt(await SC.tokenInst.methods.balanceOf(account).call());
-          earnedRaw = new bigInt(await SC.tokenInst.methods.earned(account).call());
-          let holdingTimeRaw = parseInt(await SC.tokenInst.methods.holdingTime().call());
-          let userLastStackedTimeRaw = parseInt(await SC.tokenInst.methods.userLastStackedTime(account).call());
+        inStakeRaw = await SC.getInStake(account);
+        earnedRaw = await SC.getEarned(account);
+          // let holdingTimeRaw = parseInt(await SC.tokenInst.methods.holdingTime().call());
+          // let userLastStackedTimeRaw = parseInt(await SC.tokenInst.methods.userLastStackedTime(account).call());
           // holdingTime = parseInt(holdingTimeRaw._hex, '16');
           // userLastStackedTime = parseInt(userLastStackedTimeRaw._hex, '16');
-           setInStake(String(inStakeRaw.value / 10n ** 18n));
-           setEarned(String(earnedRaw.value).slice(0,5),parseInt(earnedRaw.value) > 5 ? '...': '');
+           setInStake(inStakeRaw);
+           setEarned(earnedRaw);
       } else if (version === "2") {
-           let inStakeRaw = await SC.getInStakeV2(account);
-           earnedRaw = parseInt(await SC.tokenInst.methods.earned(account).call());
-            setInStake(inStakeRaw.toFixed(2));
+           inStakeRaw = await SC.getInStakeV2(account);
+           earnedRaw = await SC.getEarnedV2(account);
+           setInStake(inStakeRaw.toFixed(2));
            setEarned(earnedRaw.toFixed(2));
           //  setUnlockedReward(await SC.getUnlockedRewardV2(account));
       }

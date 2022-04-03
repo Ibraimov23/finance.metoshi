@@ -4,6 +4,7 @@ import stakingV2ABI from './assets/data/stakingV2ABI.json';
 import { ethers } from "ethers";
 import Web3 from 'web3';
 import BigNumber from "bignumber.js";
+import bigInt from "big-integer";
 
 async function V2_getStakedDataById(account, id) {
     const bigNumberValue = ethers.BigNumber.from(id.toString());
@@ -154,32 +155,22 @@ export class SC {
         } catch (e) { throw e }
     }
 
-    static async getEarned(account) {
-        const contract = SC.stakingContract;
+static async getEarned(account) {
+    const earned = new bigInt(await SC.tokenInst.methods.earned(account).call());
+    return String(earned.value).slice(0,5).concat(parseInt(earned.value) > 5 ? '...': '');
+}
 
-        try {
-            let earned = await contract.earned(account);
+static async getInStake(account) {
+    const balance = new bigInt(await SC.tokenInst.methods.balanceOf(account).call());
+    return String(balance.value / 10n ** 18n);
+}
 
-            return parseInt(earned._hex, '16');
-        } catch(e) { throw e }
-    }
-
-    static async getInStake(account) {
-        const contract = SC.stakingContract;
-
-        try {
-            let balance = await contract.balanceOf(account);
-            SC.inStake = +parseInt(balance._hex, '16').toString().slice(0, -18);
-            return +parseInt(balance._hex, '16').toString().slice(0, -18);
-        } catch(e) { throw e }
-    }
-
-    static async getEarnedV2(account) {
-        try {
-            let totalRewards = await V2_getTotalRewardsValue(account, 2678400);
-            return totalRewards * SC.coefficient;
-        } catch(e) { throw e }
-    }
+static async getEarnedV2(account) {
+    try {
+        let totalRewards = await V2_getTotalRewardsValue(account, 2678400);
+        return totalRewards * SC.coefficient;
+    } catch(e) { throw e }
+}
 
     static async getInStakeV2(account) {
         try {
@@ -245,9 +236,9 @@ static async withdrawV2(account) {
 
     static async APR() {
         let count1 = await SC.tokenInst.methods.rewardPerToken().call();
-        let hexString = count1.toString(18);
-        count1 = parseInt(hexString, 18);
-        let count = parseInt(count1) / (parseInt(await parseInt(await SC.tokenInst.methods.rewardsDuration().call())) / 86400) * 360 * 100;
+        let count2 = await SC.tokenInst.methods.rewardsDuration().call();
+        count1 = parseInt(count1.toString(18), 18);
+        let count = parseInt(count1) / (parseInt(count2) / 86400) * 360 * 100;
         return parseInt(count);
     }
 
