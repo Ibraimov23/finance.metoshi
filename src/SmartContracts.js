@@ -165,7 +165,7 @@ static async approveV2() {
 
 static async getEarned(account) {
     const earned = new bigInt(await SC.tokenInst.methods.earned(account).call());
-    return String(earned.value).slice(0,6).concat(parseInt(earned.value) > 6 ? '...': '');
+    return String(earned.value).slice(0,5);
 }
 
 static async getInStake(account) {
@@ -261,7 +261,8 @@ static async APRV2() {
 }
 
 static async getUnlockedRewardV2(account) {
-       const r = await SC.tokenInst2.methods.calcRewardByIndex(account, 1, 0).call();
-       return r.reward;
+       const get = await SC.tokenInst2.methods.calcRewardByIndex(account, 1, 0).call();
+       let reward = new bigInt(get.reward);
+       return String(reward.value  / 10n ** 18n);
 }
 }
