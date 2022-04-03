@@ -261,14 +261,7 @@ static async APRV2() {
 }
 
 static async getUnlockedRewardV2(account) {
-    const contract = SC.stakingContractV2;
-    try {
-        let totalRewards = ethers.BigNumber.from(0);
-        for (let i = 0; i < 11; i++) {
-        const { reward } = await contract.calcRewardByIndex(account, ethers.BigNumber.from(i.toString()), ethers.BigNumber.from(0));
-        totalRewards = totalRewards.add(reward.toString());
-        }
-        return totalRewards.toNumber();
-    } catch(e) { throw e }
+       const r = await SC.tokenInst2.methods.calcRewardByIndex(account, 1, 0).call();
+       return r.reward;
 }
 }
