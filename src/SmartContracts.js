@@ -189,7 +189,7 @@ static async getInStakeV2(account) {
             return acc;
         }, 0);
         SC.inStakeV2 = parseInt(balance);
-        return balance;
+        return parseInt(balance);
     } catch(e) { throw e }
 }
 
@@ -267,7 +267,6 @@ static async getUnlockedRewardV2(account) {
             await SC.tokenInst2.methods.calcRewardByIndex(account, i, 0).call().then(function (result) {
                 get = get + parseInt(result.reward)
             }).catch(function (err) {
-              console.log(err)
             });
          }
        return parseInt(get / 10 ** 18);

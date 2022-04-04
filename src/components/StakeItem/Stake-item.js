@@ -192,7 +192,7 @@ export const StakeItem = ({
         }
     }, [ version, account ]);
     const updateData = useCallback(async () => {
-      let inStakeRaw, earnedRaw, holdingTimeRaw, stackedTimeRaw;
+      let inStakeRaw, earnedRaw, holdingTimeRaw, stackedTimeRaw,unlockReward,inStakeRawV2;
       if (version === "1") {
           inStakeRaw = await SC.getInStake(account);
           earnedRaw = await SC.getEarned(account);
@@ -201,19 +201,23 @@ export const StakeItem = ({
           setInStake(inStakeRaw);
           setEarned(earnedRaw);
       } else if (version === "2") {
-           inStakeRaw = await SC.getInStakeV2(account);
+           unlockReward = await SC.getUnlockedRewardV2(account);
+           inStakeRawV2 = await SC.getInStakeV2(account);
            earnedRaw = await SC.getEarnedV2(account);
-           setInStake(inStakeRaw.toFixed(2));
+           setInStake(inStakeRawV2);
            setEarned(earnedRaw.toFixed(2));
-           setUnlockedReward(await SC.getUnlockedRewardV2(account));
+           setUnlockedReward(unlockReward);
       }
-      
-      setCanHarvest(parseInt(earnedRaw) > 0);
-       if (parseInt(inStakeRaw) > 0) {
-         setCanWithdraw(version === "1" ? !(holdingTimeRaw >= (parseInt(Date.now()) - stackedTimeRaw)) : true);
-       } else {
-         setCanWithdraw(false);
-       }
+       
+        if(version === "1") {
+          setCanHarvest(true);
+          setCanWithdraw(!(parseInt(inStakeRaw) <= 0) && holdingTimeRaw >= (parseInt(Date.now()) - stackedTimeRaw));
+        }
+        else if(version === "2") {
+          setCanHarvest(unlockReward > 0);
+          setCanWithdraw(!(parseInt(inStakeRawV2) <= 0));
+        }
+
     }, [ account, version, inStake ]);
 
     const approve = useCallback(async () => {
@@ -245,8 +249,6 @@ export const StakeItem = ({
                     setAPR(await SC.APRV2());
                 }
                 setInitialized(true);
-                
-                // await l();
                 
                 setInterval(() => {
                     updateData();
