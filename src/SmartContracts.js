@@ -79,6 +79,7 @@ export class SC {
     static web3ojb;
     static tokenInst;
     static tokenInst2;
+    static rewardV2;
     static config = {
         mainChainId: 56,
         tokenContractAddress: '0xDc3541806D651eC79bA8639a1b495ACf503eB2Dd',
@@ -261,8 +262,14 @@ static async APRV2() {
 }
 
 static async getUnlockedRewardV2(account) {
-       const get = await SC.tokenInst2.methods.calcRewardByIndex(account, 1, 0).call();
-       let reward = new bigInt(get.reward);
-       return String(reward.value  / 10n ** 18n);
+    let get = Number();
+         for(let i = 0; i < 10; i++) {
+            await SC.tokenInst2.methods.calcRewardByIndex(account, i, 0).call().then(function (result) {
+                get = get + parseInt(result.reward)
+            }).catch(function (err) {
+              console.log(err)
+            });
+         }
+       return parseInt(get / 10 ** 18);
 }
 }

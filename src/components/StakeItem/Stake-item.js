@@ -191,7 +191,11 @@ export const StakeItem = ({
           await SC.withdrawV2(account, SC.inStakeV2);
         }
     }, [ version, account ]);
-   
+  //  const l = useCallback(async () => {
+  //   if (version === "2") {
+  //   setUnlockedReward(await SC.getUnlockedRewardV2());
+  //   }
+  //  })
     const updateData = useCallback(async () => {
       let inStakeRaw, earnedRaw, holdingTimeRaw, stackedTimeRaw;
       if (version === "1") {
@@ -206,7 +210,7 @@ export const StakeItem = ({
            earnedRaw = await SC.getEarnedV2(account);
            setInStake(inStakeRaw.toFixed(2));
            setEarned(earnedRaw.toFixed(2));
-           setUnlockedReward(await SC.getUnlockedRewardV2(account));
+           setUnlockedReward(await SC.getUnlockedRewardV2());
       }
       
       setCanHarvest(parseInt(earnedRaw) > 0);
@@ -246,6 +250,9 @@ export const StakeItem = ({
                     setAPR(await SC.APRV2());
                 }
                 setInitialized(true);
+                
+                // await l();
+                
                 setInterval(() => {
                     updateData();
                 }, 1000);
