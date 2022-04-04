@@ -210,7 +210,7 @@ export const StakeItem = ({
            earnedRaw = await SC.getEarnedV2(account);
            setInStake(inStakeRaw.toFixed(2));
            setEarned(earnedRaw.toFixed(2));
-           setUnlockedReward(await SC.getUnlockedRewardV2());
+           setUnlockedReward(await SC.getUnlockedRewardV2(account));
       }
       
       setCanHarvest(parseInt(earnedRaw) > 0);
