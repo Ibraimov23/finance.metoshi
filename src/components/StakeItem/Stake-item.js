@@ -191,11 +191,6 @@ export const StakeItem = ({
           await SC.withdrawV2(account, SC.inStakeV2);
         }
     }, [ version, account ]);
-  //  const l = useCallback(async () => {
-  //   if (version === "2") {
-  //   setUnlockedReward(await SC.getUnlockedRewardV2());
-  //   }
-  //  })
     const updateData = useCallback(async () => {
       let inStakeRaw, earnedRaw, holdingTimeRaw, stackedTimeRaw;
       if (version === "1") {
@@ -301,7 +296,7 @@ export const StakeItem = ({
                     <p>{ earned }</p>
                 </StyledStakeItemTextWithButton>
 
-                <StyledStakeItemButton activeButton={ approved && canHarvest } onClick={ approved ? harvest && canHarvest : () => {} }>
+                <StyledStakeItemButton activeButton={ approved && canHarvest } onClick={ approved && canHarvest ? harvest : () => {} }>
                     {t("STAKE.HARVEST")} <img src={HarvestIcon} alt="" />
                 </StyledStakeItemButton>
             </StyledStakeItemRowWithButton>
@@ -311,7 +306,7 @@ export const StakeItem = ({
                     <p>{ inStake }</p>
                 </StyledStakeItemTextWithButton>
 
-                <StyledStakeItemButton activeButton={ approved && canWithdraw} onClick={ approved ? withdraw && canWithdraw : () => {} }>
+                <StyledStakeItemButton activeButton={ approved && canWithdraw} onClick={ approved && canWithdraw ? withdraw : () => {} }>
                     {(activeButton && `${t("STAKE.STAKE")} METO`) ||
                         `${t("STAKE.WITHDRAW")}`}{" "}
                     <img src={WithdrawIcon} alt="" />
