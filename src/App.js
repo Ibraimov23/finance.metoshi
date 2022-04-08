@@ -204,7 +204,7 @@ function App() {
             <StyledBgDecL></StyledBgDecL>
             <StyledBgDecT></StyledBgDecT>
             <StyledAppContainer>
-                <Navigation />
+                { <Navigation />}
                 <Finance
                     update={ update }
                     account={ account }

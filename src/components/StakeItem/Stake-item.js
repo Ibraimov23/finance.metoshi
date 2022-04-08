@@ -33,9 +33,6 @@ const StyledStakeItemHeader = styled.div`
   p {
     margin-right: 10px;
   }
-  img {
-    cursor: pointer;
-  }
 `;
 
 const StyledStakeItemRow = styled.div`
@@ -144,6 +141,37 @@ const StyledStakeItemAccountId = styled.div`
   font-weight: 600;
   background: rgba(255, 255, 255, .2);
   border-radius: 7px;
+`;
+const StyledStakeItemHelp = styled.span`
+.i {
+  position: relative;
+  top: 2px;
+}
+.i .tooltip {
+  display: none;
+  background: #000;
+  border-radius: 4px;
+  color: #fff;
+  padding: 4px 4px 6px;
+  font-size: 12px;
+  line-height: 130%;
+  position: absolute;
+  left: calc(50% - 234px/2);
+  bottom: 38px;
+  width: 234px;
+  box-sizing: border-box;
+  text-align: center;
+  }
+  .i .icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url(22.svg);
+    vertical-align: top;
+    margin-top: 3px;
+}
+.i:hover   .tooltip {display: block;}
+.i .tooltip:before{position:absolute;content:'';left:calc(50% - 4px);bottom:-4px;width:8px;height:4px;background-image: url("data:image/svg+xml,%3Csvg width='8' height='4' viewBox='0 0 8 4' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4.01107 4L8 0H0L4.01107 4Z' fill='black'/%3E%3C/svg%3E%0A");}
 `;
 
 
@@ -266,17 +294,42 @@ export const StakeItem = ({
 
     return (
         <StyledStakeItemContainer>
-            <StyledStakeItemHeader>
+            { version === "1" ? <StyledStakeItemHeader>
                 <p>
-                    {t("STAKE.STAKE_TITLE")}
-                    {earnedText}{" "}
+                    {t("STAKE.STAKE_TITLE1")}
                 </p>
-                <img src={HelpIcon} alt="" />
-            </StyledStakeItemHeader>
+                <StyledStakeItemHelp>
+                <span class="i">
+                      <img src={HelpIcon} alt="" />
+			                <span class="tooltip">			
+                      Your deposit will be locked for 30 days. However, the rewards will always be available for withdrawal.
+		          	</span>
+              	</span>
+                </StyledStakeItemHelp>
+            </StyledStakeItemHeader> : version == "2" ? <StyledStakeItemHeader>
+                <p>
+                    {t("STAKE.STAKE_TITLE2")}
+                </p>
+                <StyledStakeItemHelp>
+                <span class="i">
+                      <img src={HelpIcon} alt="" />
+			                <span class="tooltip">			
+                      Your deposit is always available for withdrawal. However, the rewards will start unlocking after 30 days.
+		          	</span>
+              	</span>
+                </StyledStakeItemHelp>
+            </StyledStakeItemHeader> : null}
             <StyledStakeItemRow>
                 <StyledAPR>
                     <span> {t("STAKE.APR")}</span>
-                    <img src={HelpIcon} alt="" />
+                    <StyledStakeItemHelp>
+                     <span class="i">
+                      <img src={HelpIcon} alt="" />
+			                <span class="tooltip">			
+                       APR is not fixed and can change constantly
+		          	</span>
+              	</span>
+                </StyledStakeItemHelp>
                 </StyledAPR>
                 <p>{ APR ? `${APR}%` : '-' }</p>
             </StyledStakeItemRow>

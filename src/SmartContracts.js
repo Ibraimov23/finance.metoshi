@@ -166,7 +166,7 @@ static async approveV2() {
 
 static async getEarned(account) {
     const earned = new bigInt(await SC.tokenInst.methods.earned(account).call());
-    return String(earned.value).slice(0,5);
+    return String(earned.value).slice(0,4);
 }
 
 static async getInStake(account) {

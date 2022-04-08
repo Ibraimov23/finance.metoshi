@@ -69,31 +69,10 @@ export const Navigation = ({ handleBurgerClick }) => {
         <Burger />
       </StyledBurger>
       <div>
-        <img src={Logo} alt="METOSHI"></img>
+        <a href="https://metoshi.com"><img src={Logo} alt="METOSHI"></img></a>
       </div>
-      <StyledNavMenuContainer>
-        <NavigationItem isSelect={true} text={t("PRODUCT")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("FINANCE")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("MARKETPLACE")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("COMICS")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("MEMES")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("WHITEPAPER")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("CONTACTS")} />
-      </StyledNavMenuContainer>
       <StyledButtonGroup>
         <LangSelector />
-        <div>
-          <StyledGetWhitelistedButton>
-            {t("BUTTON_TITLE")}{" "}
-            <StyledGetWhitelistedIcon src={Whitelisted} alt="" />
-          </StyledGetWhitelistedButton>
-        </div>
       </StyledButtonGroup>
     </StyledNavContainer>
   );

@@ -32,21 +32,6 @@ export const Footer = () => {
   return (
     <StyledFooterContainer>
       <StyledCopyright>©Metoshi, 2021</StyledCopyright>
-      <StyledFooterMenuContainer>
-        <NavigationItem isSelect={true} text={t("PRODUCT")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("FINANCE")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("MARKETPLACE")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("COMICS")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("MEMES")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("WHITEPAPER")} />
-        <StyledNavDevider />
-        <NavigationItem text={t("CONTACTS")} />
-      </StyledFooterMenuContainer>
       <LangSelector />
     </StyledFooterContainer>
   );

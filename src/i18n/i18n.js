@@ -20,7 +20,8 @@ i18n.use(initReactI18next).init({
 
         BACK: "Back",
         STAKE: {
-          STAKE_TITLE: "Stake METO - Earn ",
+          STAKE_TITLE1: "Staking METO 2.0",
+          STAKE_TITLE2: "Staking METO 1.0",
           APR: "APR",
           EARNED: "Earned",
           EARN: "Earn",
